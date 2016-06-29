@@ -66,7 +66,7 @@ import UIKit
     - see: `Marklight`
  */
 
-public class MarklightTextStorage: NSTextStorage {
+@objc public class MarklightTextStorage: NSTextStorage {
 
     // We store here the `NSAttributedString`.
     private var imp = NSMutableAttributedString()
@@ -189,6 +189,10 @@ public class MarklightTextStorage: NSTextStorage {
     }
         
     // MARK: Reading Text
+    
+    public var attributedString: NSAttributedString {
+        return imp
+    }
     
     /**
     Use this method to extract the text from the `UITextView` as plain text.

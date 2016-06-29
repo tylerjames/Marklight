@@ -66,7 +66,7 @@ import UIKit
     - see: `Marklight`
  */
 
-@objc public class MarklightTextStorage: NSTextStorage {
+public class MarklightTextStorage: NSTextStorage {
 
     // We store here the `NSAttributedString`.
     private var imp = NSMutableAttributedString()

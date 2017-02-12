@@ -139,7 +139,7 @@ open class MarklightTextStorage: NSTextStorage {
         Marklight.quoteIndendation = quoteIndendation
         Marklight.fontTextStyle = fontTextStyle
         
-        Marklight.processEditing(textStorage: self)
+        Marklight.processEditing(self)
         
         super.processEditing()
     }

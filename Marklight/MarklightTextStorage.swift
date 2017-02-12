@@ -66,42 +66,42 @@ import UIKit
     - see: `Marklight`
  */
 
-public class MarklightTextStorage: NSTextStorage {
+open class MarklightTextStorage: NSTextStorage {
 
     // We store here the `NSAttributedString`.
-    private var imp = NSMutableAttributedString()
+    fileprivate var imp = NSMutableAttributedString(string: "")
     
     // MARK: Syntax highlight customisation
     
     /**
     `UIColor` used to highlight markdown syntax. Default value is light grey.
     */
-    public var syntaxColor = UIColor.lightGray
+    open var syntaxColor = UIColor.lightGray
     
     /**
      Font used for blocks and inline code. Default value is *Menlo*.
      */
-    public var codeFontName = "Menlo"
+    open var codeFontName = "Menlo"
     
     /**
      `UIColor` used for blocks and inline code. Default value is dark grey.
      */
-    public var codeColor = UIColor.darkGray
+    open var codeColor = UIColor.darkGray
     
     /**
      Font used for quote blocks. Default value is *Menlo*.
      */
-    public var quoteFontName = "Menlo"
+    open var quoteFontName = "Menlo"
     
     /**
      `UIColor` used for quote blocks. Default value is dark grey.
      */
-    public var quoteColor = UIColor.darkGray
+    open var quoteColor = UIColor.darkGray
     
     /**
      Quote indentation in points. Default 20.
      */
-    public var quoteIndendation : CGFloat = 20
+    open var quoteIndendation : CGFloat = 20
     
     /**
      Dynamic type font text style, default `UIFontTextStyleBody`.
@@ -110,7 +110,7 @@ public class MarklightTextStorage: NSTextStorage {
        [Text 
        Styles](xcdoc://?url=developer.apple.com/library/ios/documentation/UIKit/Reference/UIFontDescriptor_Class/index.html#//apple_ref/doc/constant_group/Text_Styles)
      */
-    public var fontTextStyle : String = UIFontTextStyle.body.rawValue
+    open var fontTextStyle : String = UIFontTextStyle.body.rawValue
     
     // MARK: Syntax highlighting
     
@@ -127,7 +127,7 @@ public class MarklightTextStorage: NSTextStorage {
     - see:
     [`NSTextStorage`](xcdoc://?url=developer.apple.com/library/ios/documentation/UIKit/Reference/NSTextStorage_Class_TextKit/index.html#//apple_ref/doc/uid/TP40013282)
     */
-    override public func processEditing() {
+    override open func processEditing() {
         // removeParagraphAttributes()
         removeWholeAttributes()
         
@@ -202,7 +202,7 @@ public class MarklightTextStorage: NSTextStorage {
     - see:
     [`NSTextStorage`](xcdoc://?url=developer.apple.com/library/ios/documentation/UIKit/Reference/NSTextStorage_Class_TextKit/index.html#//apple_ref/doc/uid/TP40013282)
      */
-    override public var string : String {
+    override open var string : String {
         return imp.string
     }
     
@@ -221,8 +221,10 @@ public class MarklightTextStorage: NSTextStorage {
      - returns: The attributes for the character at index.     - see:
      [`NSTextStorage`](xcdoc://?url=developer.apple.com/library/ios/documentation/UIKit/Reference/NSTextStorage_Class_TextKit/index.html#//apple_ref/doc/uid/TP40013282)
      */
-    override public func attributes(at: Int, effectiveRange range: NSRangePointer?) -> [String : Any] {
-        return imp.attributes(at: at, effectiveRange: range) as [String : Any]
+
+    
+    open override func attributes(at location: Int, effectiveRange range: NSRangePointer?) -> [String : Any] {
+        return imp.attributes(at: location, effectiveRange: range) as [String : AnyObject]
     }
     
     // MARK: Text Editing
@@ -240,7 +242,7 @@ public class MarklightTextStorage: NSTextStorage {
     - see:
     [`NSTextStorage`](xcdoc://?url=developer.apple.com/library/ios/documentation/UIKit/Reference/NSTextStorage_Class_TextKit/index.html#//apple_ref/doc/uid/TP40013282)
     */
-    override public func replaceCharacters(in range: NSRange, with str: String) {
+    override open func replaceCharacters(in range: NSRange, with str: String) {
         beginEditing()
         imp.replaceCharacters(in: range, with: str)
         edited([.editedCharacters], range: range, changeInLength: (str as NSString).length - range.length)
@@ -266,7 +268,9 @@ public class MarklightTextStorage: NSTextStorage {
      - see:
         [`NSTextStorage`](xcdoc://?url=developer.apple.com/library/ios/documentation/UIKit/Reference/NSTextStorage_Class_TextKit/index.html#//apple_ref/doc/uid/TP40013282)
      */
-    override public func setAttributes(_ attrs: [String : Any]?, range: NSRange) {
+    
+    
+    open override func setAttributes(_ attrs: [String : Any]?, range: NSRange) {
         beginEditing()
         imp.setAttributes(attrs, range: range)
         edited([.editedAttributes], range: range, changeInLength: 0)
@@ -274,7 +278,7 @@ public class MarklightTextStorage: NSTextStorage {
     }
     
     // Remove every attribute to the whole text
-    private func removeParagraphAttributes() {
+    fileprivate func removeParagraphAttributes() {
         let textSize = UIFontDescriptor.preferredFontDescriptor(withTextStyle: UIFontTextStyle.body).pointSize
         let paragraphRange = (string as NSString).paragraphRange(for: self.editedRange)
         self.removeAttribute(NSForegroundColorAttributeName, range: paragraphRange)
@@ -283,7 +287,7 @@ public class MarklightTextStorage: NSTextStorage {
     }
     
     // Remove every attribute the the paragraph containing the last edit.
-    private func removeWholeAttributes() {
+    fileprivate func removeWholeAttributes() {
         let textSize = UIFontDescriptor.preferredFontDescriptor(withTextStyle: UIFontTextStyle.body).pointSize
         let wholeRange = NSMakeRange(0, (self.string as NSString).length)
         self.removeAttribute(NSForegroundColorAttributeName, range: wholeRange)

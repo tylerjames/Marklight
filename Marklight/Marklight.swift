@@ -213,7 +213,7 @@ public struct Marklight {
     }
     
     // We transform the user provided `codeFontName` `String` to a `NSFont`
-    fileprivate static func codeFont(size: CGFloat) -> UIFont {
+    fileprivate static func codeFont(_ size: CGFloat) -> UIFont {
         if let font = UIFont(name: Marklight.codeFontName, size: size) {
             return font
         } else {
@@ -222,7 +222,7 @@ public struct Marklight {
     }
 
     // We transform the user provided `quoteFontName` `String` to a `NSFont`
-    fileprivate static func quoteFont(size: CGFloat) -> UIFont {
+    fileprivate static func quoteFont(_ size: CGFloat) -> UIFont {
         if let font = UIFont(name: Marklight.quoteFontName, size: size) {
             return font
         } else {
@@ -248,13 +248,13 @@ public struct Marklight {
     - parameter textStorage: your `NSTextStorage` subclass as the highlights
         will be applied to its attributed string through the `-addAttribute:value:range:` method.
     */
-    public static func processEditing(textStorage: NSTextStorage) {
+    public static func processEditing(_ textStorage: NSTextStorage) {
         let wholeRange = NSMakeRange(0, (textStorage.string as NSString).length)
         let paragraphRange = (textStorage.string as NSString).paragraphRange(for: textStorage.editedRange)
         
         let textSize = UIFontDescriptor.preferredFontDescriptor(withTextStyle: UIFontTextStyle(rawValue: Marklight.fontTextStyleValidated)).pointSize
-        let codeFont = Marklight.codeFont(size: textSize)
-        let quoteFont = Marklight.quoteFont(size: textSize)
+        let codeFont = Marklight.codeFont(textSize)
+        let quoteFont = Marklight.quoteFont(textSize)
         let boldFont = UIFont.boldSystemFont(ofSize: textSize)
         let italicFont = UIFont.italicSystemFont(ofSize: textSize)
         
@@ -531,7 +531,7 @@ public struct Marklight {
     */
     
     fileprivate static let anchorPattern = [
-        "(                               # wrap whole match in $1",
+        "(                                  # wrap whole match in $1",
         "    \\[",
         "        (\(Marklight.getNestedBracketsPattern()))  # link text = $2",
         "    \\]",
@@ -540,7 +540,7 @@ public struct Marklight {
         "    (?:\\n\\p{Z}*)?                # one optional newline followed by spaces",
         "",
         "    \\[",
-        "        (.*?)                   # id = $3",
+        "        (.*?)                      # id = $3",
         "    \\]",
         ")"
         ].joined(separator: "\n")
@@ -566,7 +566,7 @@ public struct Marklight {
         "      (\(Marklight.getNestedParensPattern()))    # href = $3",
         "      \\p{Z}*",
         "      (               # $4",
-        "      (['\"])       # quote char = $5",
+        "      (['\"])         # quote char = $5",
         "      (.*?)           # title = $6",
         "      \\5             # matching quote",
         "      \\p{Z}*",
@@ -762,7 +762,7 @@ public struct Marklight {
     fileprivate static let italicRegex = Regex(pattern: italicPattern, options: [.allowCommentsAndWhitespace, .anchorsMatchLines])
     
     fileprivate struct Regex {
-        private let regularExpression: NSRegularExpression!
+        fileprivate let regularExpression: NSRegularExpression!
         
         fileprivate init(pattern: String, options: NSRegularExpression.Options = NSRegularExpression.Options(rawValue: 0)) {
             var error: NSError?
@@ -789,7 +789,7 @@ public struct Marklight {
             self.regularExpression = re
         }
         
-        fileprivate func matches(input: String, range: NSRange,
+        fileprivate func matches(_ input: String, range: NSRange,
             completion: @escaping (_ result: NSTextCheckingResult?) -> Void) {
             let s = input as NSString
             let options = NSRegularExpression.MatchingOptions(rawValue: 0)
@@ -805,14 +805,14 @@ public struct Marklight {
     
     /// maximum nested depth of [] and () supported by the transform; 
     /// implementation detail
-    private static let _nestDepth = 6
+    fileprivate static let _nestDepth = 6
     
-    private static var _nestedBracketsPattern = ""
-    private static var _nestedParensPattern = ""
+    fileprivate static var _nestedBracketsPattern = ""
+    fileprivate static var _nestedParensPattern = ""
     
     /// Reusable pattern to match balanced [brackets]. See Friedl's
     /// "Mastering Regular Expressions", 2nd Ed., pp. 328-331.
-    private static func getNestedBracketsPattern() -> String {
+    fileprivate static func getNestedBracketsPattern() -> String {
         // in other words [this] and [this[also]] and [this[also[too]]]
         // up to _nestDepth
         if (_nestedBracketsPattern.isEmpty) {
@@ -822,14 +822,14 @@ public struct Marklight {
                 "|",
                 "\\["
                 ].joined(separator: "\n"), _nestDepth) +
-                repeatString(text: " \\])*", _nestDepth)
+                repeatString(" \\])*", _nestDepth)
         }
         return _nestedBracketsPattern
     }
     
     /// Reusable pattern to match balanced (parens). See Friedl's
     /// "Mastering Regular Expressions", 2nd Ed., pp. 328-331.
-    private static func getNestedParensPattern() -> String {
+    fileprivate static func getNestedParensPattern() -> String {
         // in other words (this) and (this(also)) and (this(also(too)))
         // up to _nestDepth
         if (_nestedParensPattern.isEmpty) {
@@ -839,13 +839,13 @@ public struct Marklight {
                 "|",
                 "\\("
                 ].joined(separator: "\n"), _nestDepth) +
-                repeatString(text: " \\))*", _nestDepth)
+                repeatString(" \\))*", _nestDepth)
         }
         return _nestedParensPattern
     }
 
     /// this is to emulate what's available in PHP
-    private static func repeatString(text: String, _ count: Int) -> String {
+    fileprivate static func repeatString(_ text: String, _ count: Int) -> String {
         return Array(repeating: text, count: count).reduce("", +)
     }
 }

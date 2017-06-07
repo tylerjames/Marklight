@@ -164,6 +164,10 @@ open class MarklightTextStorage: NSTextStorage {
         observeTextSize()
     }
     
+    required public init(itemProviderData data: Data, typeIdentifier: String) throws {
+        fatalError("init(itemProviderData:typeIdentifier:) has not been implemented")
+    }
+    
     /**
     Internal method to register to notifications determined by dynamic type size
     changes and redraw the attributed text with the appropriate text size.
